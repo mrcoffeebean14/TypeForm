@@ -8,6 +8,7 @@ import {
   Plug,
   Send,
   Sparkles,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -24,7 +25,7 @@ import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 
-type Tab = "create" | "design" | "share" | "connect";
+type Tab = "create" | "design" | "share" | "connect" | "team";
 
 export default function BuilderPage({ params }: { params: { id: string } }) {
   const b = useBuilder(params.id);
@@ -47,6 +48,7 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
     { id: "design", label: "Design", icon: Palette },
     { id: "share", label: "Share", icon: Send },
     { id: "connect", label: "Connect", icon: Plug },
+    { id: "team", label: "Team", icon: Users },
   ];
 
   return (
@@ -167,6 +169,16 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
               icon={Plug}
               title="Integrations & webhooks"
               description="Connect Google Sheets, Slack, Zapier, and webhooks. Coming soon."
+            />
+          </main>
+        )}
+
+        {tab === "team" && (
+          <main className="flex flex-1 items-center justify-center">
+            <ComingSoon
+              icon={Users}
+              title="Team collaboration & sharing"
+              description="Invite teammates, share workspaces, and co-edit forms. Coming soon."
             />
           </main>
         )}
