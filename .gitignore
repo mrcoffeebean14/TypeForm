@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+*.db
+*.sqlite3
+.env
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.env.local
+.env*.local
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Assignment Typeform Clone.pdf
+
+# Misc
+*.log
+
+# Claude Code tooling
+.claude/
