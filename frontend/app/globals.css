@@ -33,3 +33,19 @@ body {
   outline: none;
   box-shadow: 0 0 0 3px rgba(4, 69, 175, 0.25);
 }
+
+/* Tighter optical tracking for large display headlines. */
+.text-display {
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

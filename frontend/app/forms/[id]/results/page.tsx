@@ -34,10 +34,10 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
       <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/90 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/90">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
           <div className="flex items-center gap-4">
-            <Link href="/" className="text-ink-faint hover:text-ink">
+            <Link href="/dashboard" className="text-ink-faint hover:text-ink">
               <ArrowLeft size={18} />
             </Link>
-            <Logo />
+            <Logo href="/dashboard" />
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />

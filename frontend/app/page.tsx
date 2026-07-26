@@ -1,185 +1,262 @@
-"use client";
-
-import { useMutation } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import toast from "react-hot-toast";
+import { ArrowRight, BarChart3, GitBranch, MessageSquare } from "lucide-react";
+import Link from "next/link";
 
 import { Logo } from "@/components/Logo";
-import { FormCard } from "@/components/dashboard/FormCard";
-import { Button } from "@/components/ui/Button";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { Modal } from "@/components/ui/Modal";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { api } from "@/lib/api";
-import { useForms, useInvalidateForms } from "@/lib/hooks";
-import type { FormSummary } from "@/lib/types";
+import { HeroFormDemo } from "@/components/marketing/HeroFormDemo";
+import { QUESTION_TYPES } from "@/lib/questionMeta";
 
-export default function DashboardPage() {
-  const router = useRouter();
-  const { data: forms, isLoading } = useForms();
-  const invalidate = useInvalidateForms();
-
-  const [createOpen, setCreateOpen] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
-  const [renameTarget, setRenameTarget] = useState<FormSummary | null>(null);
-  const [renameValue, setRenameValue] = useState("");
-  const [deleteTarget, setDeleteTarget] = useState<FormSummary | null>(null);
-
-  const createMutation = useMutation({
-    mutationFn: (title: string) => api.createForm({ title: title || "Untitled form" }),
-    onSuccess: (form) => {
-      toast.success("Form created");
-      router.push(`/forms/${form.id}/edit`);
-    },
-    onError: () => toast.error("Could not create form"),
-  });
-
-  const renameMutation = useMutation({
-    mutationFn: ({ id, title }: { id: string; title: string }) => api.updateForm(id, { title }),
-    onSuccess: () => {
-      toast.success("Renamed");
-      invalidate();
-      setRenameTarget(null);
-    },
-  });
-
-  const duplicateMutation = useMutation({
-    mutationFn: (id: string) => api.duplicateForm(id),
-    onSuccess: () => {
-      toast.success("Form duplicated");
-      invalidate();
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => api.deleteForm(id),
-    onSuccess: () => {
-      toast.success("Form deleted");
-      invalidate();
-    },
-  });
-
+export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
-      <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/80 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/80">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <Logo />
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Button onClick={() => { setNewTitle(""); setCreateOpen(true); }}>
-              <Plus size={16} /> Create form
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-6 py-10">
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold tracking-tight">My forms</h1>
-          <p className="mt-1 text-sm text-ink-faint">
-            Build, publish, and collect responses — the Typeform way.
-          </p>
-        </div>
-
-        {isLoading ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-64 animate-pulse rounded-xl bg-neutral-200 dark:bg-neutral-800" />
-            ))}
-          </div>
-        ) : forms && forms.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <button
-              onClick={() => { setNewTitle(""); setCreateOpen(true); }}
-              className="flex h-full min-h-[16rem] flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-neutral-300 text-ink-faint transition hover:border-accent hover:text-accent dark:border-neutral-700"
-            >
-              <Plus size={28} />
-              <span className="text-sm font-medium">New form</span>
-            </button>
-            {forms.map((form) => (
-              <FormCard
-                key={form.id}
-                form={form}
-                onRename={(f) => { setRenameTarget(f); setRenameValue(f.title); }}
-                onDuplicate={(f) => duplicateMutation.mutate(f.id)}
-                onDelete={(f) => setDeleteTarget(f)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 py-24 text-center dark:border-neutral-700">
-            <div className="text-5xl">✨</div>
-            <h2 className="mt-4 text-lg font-medium">No forms yet</h2>
-            <p className="mt-1 text-sm text-ink-faint">Create your first form to get started.</p>
-            <Button className="mt-5" onClick={() => setCreateOpen(true)}>
-              <Plus size={16} /> Create form
-            </Button>
-          </div>
-        )}
-      </main>
-
-      {/* Create modal */}
-      <Modal
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        title="Create a new form"
-        footer={
-          <>
-            <Button variant="secondary" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button onClick={() => createMutation.mutate(newTitle)} disabled={createMutation.isPending}>
-              {createMutation.isPending ? "Creating…" : "Create"}
-            </Button>
-          </>
-        }
-      >
-        <label className="mb-1.5 block text-sm font-medium">Form title</label>
-        <input
-          autoFocus
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && !createMutation.isPending && createMutation.mutate(newTitle)}
-          placeholder="e.g. Customer feedback survey"
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-accent tf-focus dark:border-neutral-700 dark:bg-neutral-800"
-        />
-      </Modal>
-
-      {/* Rename modal */}
-      <Modal
-        open={!!renameTarget}
-        onClose={() => setRenameTarget(null)}
-        title="Rename form"
-        footer={
-          <>
-            <Button variant="secondary" onClick={() => setRenameTarget(null)}>Cancel</Button>
-            <Button
-              onClick={() => renameTarget && renameMutation.mutate({ id: renameTarget.id, title: renameValue })}
-            >
-              Save
-            </Button>
-          </>
-        }
-      >
-        <input
-          autoFocus
-          value={renameValue}
-          onChange={(e) => setRenameValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && renameTarget && !renameMutation.isPending && renameMutation.mutate({ id: renameTarget.id, title: renameValue })}
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-accent tf-focus dark:border-neutral-700 dark:bg-neutral-800"
-        />
-      </Modal>
-
-      {/* Delete confirm */}
-      <ConfirmDialog
-        open={!!deleteTarget}
-        title="Delete form?"
-        message={`"${deleteTarget?.title}" and all of its responses will be permanently deleted. This cannot be undone.`}
-        confirmLabel="Delete"
-        danger
-        onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
-        onClose={() => setDeleteTarget(null)}
-      />
+    <div className="min-h-screen bg-white text-ink">
+      <SiteNav />
+      <Hero />
+      <TrustStrip />
+      <Features />
+      <QuestionTypes />
+      <ClosingCta />
+      <SiteFooter />
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------ Nav --- */
+
+function SiteNav() {
+  return (
+    <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 backdrop-blur">
+      <div className="mx-auto flex max-w-container items-center justify-between px-6 py-3.5">
+        <div className="flex items-center gap-8">
+          <Logo />
+          <nav className="hidden items-center gap-6 text-sm text-ink-soft md:flex">
+            <a className="transition-colors hover:text-ink" href="#features">Product</a>
+            <a className="transition-colors hover:text-ink" href="#types">Templates</a>
+            <a className="transition-colors hover:text-ink" href="#pricing">Pricing</a>
+          </nav>
+        </div>
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Link href="/dashboard" className="hidden text-sm font-medium text-ink-soft transition-colors hover:text-ink sm:block">
+            Log in
+          </Link>
+          <Link
+            href="/dashboard"
+            className="rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
+          >
+            Get started
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ----------------------------------------------------------------- Hero --- */
+
+function Hero() {
+  return (
+    <section className="relative overflow-hidden">
+      {/* Ambient accent glow, kept faint. */}
+      <div className="pointer-events-none absolute -top-40 right-0 h-[520px] w-[520px] rounded-full bg-accent/10 blur-3xl" />
+
+      <div className="mx-auto grid max-w-container items-center gap-14 px-6 py-16 lg:grid-cols-[1.05fr_1fr] lg:py-24">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-xs font-medium text-ink-soft">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            No-code · Free to start
+          </span>
+
+          <h1 className="text-display mt-6 text-5xl font-extrabold sm:text-6xl lg:text-[68px]">
+            Forms people{" "}
+            <span className="relative whitespace-nowrap">
+              actually enjoy
+              <svg className="absolute -bottom-1 left-0 w-full" height="10" viewBox="0 0 300 10" preserveAspectRatio="none" aria-hidden>
+                <path d="M2 7 Q 150 1 298 6" fill="none" stroke="#0445AF" strokeWidth="3" strokeLinecap="round" />
+              </svg>
+            </span>{" "}
+            answering.
+          </h1>
+
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-ink-soft">
+            Build conversational forms and surveys that feel like a chat, not a chore.
+            Ask one question at a time — and watch completion rates climb.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Link
+              href="/dashboard"
+              className="group inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-6 py-3.5 text-base font-semibold text-white transition-transform hover:scale-[1.03]"
+            >
+              Get started — it’s free
+              <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
+            <Link
+              href="/f/customer-feedback-demo"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-black/10 px-6 py-3.5 text-base font-semibold text-ink transition-colors hover:bg-neutral-50"
+            >
+              Try a live form
+            </Link>
+          </div>
+
+          <p className="mt-4 text-sm text-ink-faint">No credit card. No sign-up wall.</p>
+        </div>
+
+        <div className="lg:pl-4">
+          <HeroFormDemo />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------------------------------- Trust strip --- */
+
+function TrustStrip() {
+  const names = ["Northwind", "Lumen", "Foundry", "Cardinal", "Verve", "Atlas"];
+  return (
+    <section className="border-y border-black/5 bg-white">
+      <div className="mx-auto flex max-w-container flex-col items-center gap-6 px-6 py-8">
+        <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-faint">
+          Teams collect better answers with Typeclone
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-60">
+          {names.map((n) => (
+            <span key={n} className="text-lg font-bold tracking-tight text-ink">
+              {n}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------- Features --- */
+
+const FEATURES = [
+  {
+    icon: MessageSquare,
+    title: "Conversational by design",
+    body: "One question fills the screen at a time. It feels human, so more people finish what they start.",
+  },
+  {
+    icon: GitBranch,
+    title: "Logic that adapts",
+    body: "Branch to the right question based on the last answer. Skip what doesn’t apply, ask what does.",
+  },
+  {
+    icon: BarChart3,
+    title: "Insights that land",
+    body: "Live summaries, per-response detail, and one-click CSV export — no spreadsheet wrangling.",
+  },
+];
+
+function Features() {
+  return (
+    <section id="features" className="mx-auto max-w-container px-6 py-20 lg:py-28">
+      <div className="max-w-2xl">
+        <h2 className="text-display text-4xl font-extrabold sm:text-5xl">
+          A form that talks with people, not at them.
+        </h2>
+        <p className="mt-5 text-lg text-ink-soft">
+          Everything you need to ask well and understand fast — without touching a line of code.
+        </p>
+      </div>
+
+      <div className="mt-14 grid gap-6 md:grid-cols-3">
+        {FEATURES.map(({ icon: Icon, title, body }) => (
+          <div
+            key={title}
+            className="group rounded-2xl border border-black/5 bg-white p-7 transition-shadow hover:shadow-[0_20px_50px_-24px_rgba(0,0,0,0.25)]"
+          >
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent/10 text-accent transition-transform group-hover:scale-105">
+              <Icon size={20} />
+            </div>
+            <h3 className="mt-5 text-xl font-bold">{title}</h3>
+            <p className="mt-2 leading-relaxed text-ink-soft">{body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------- Question types --- */
+
+function QuestionTypes() {
+  return (
+    <section id="types" className="bg-paper">
+      <div className="mx-auto max-w-container px-6 py-20 lg:py-28">
+        <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
+          <div>
+            <h2 className="text-display text-4xl font-extrabold sm:text-5xl">
+              Every question type you’ll reach for.
+            </h2>
+            <p className="mt-5 max-w-md text-lg text-ink-soft">
+              From a quick yes/no to multi-select and ratings — mix them into a flow that reads
+              like a conversation. Add your own colors, and make it yours.
+            </p>
+            <Link
+              href="/dashboard"
+              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-ink px-6 py-3.5 text-base font-semibold text-white transition-transform hover:scale-[1.03]"
+            >
+              Build your first form
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {QUESTION_TYPES.map(({ type, label, icon: Icon }) => (
+              <div
+                key={type}
+                className="flex items-center gap-2.5 rounded-xl border border-black/5 bg-white px-4 py-3.5 text-sm font-medium text-ink shadow-sm"
+              >
+                <Icon size={17} className="shrink-0 text-accent" />
+                {label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------------------------------- Closing CTA --- */
+
+function ClosingCta() {
+  return (
+    <section id="pricing" className="mx-auto max-w-container px-6 py-20 lg:py-28">
+      <div className="relative overflow-hidden rounded-[32px] bg-ink px-8 py-16 text-center text-white sm:px-16 sm:py-20">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-accent/30 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-accent/20 blur-3xl" />
+        <h2 className="text-display relative text-4xl font-extrabold sm:text-5xl">
+          Start asking awesomely.
+        </h2>
+        <p className="relative mx-auto mt-5 max-w-lg text-lg text-white/70">
+          Spin up your first conversational form in minutes. It’s free to build, share, and collect.
+        </p>
+        <Link
+          href="/dashboard"
+          className="relative mt-9 inline-flex items-center gap-2 rounded-lg bg-white px-7 py-3.5 text-base font-semibold text-ink transition-transform hover:scale-[1.03]"
+        >
+          Create a form
+          <ArrowRight size={18} />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------------------------------------------- Footer --- */
+
+function SiteFooter() {
+  return (
+    <footer className="border-t border-black/5">
+      <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-4 px-6 py-10 sm:flex-row">
+        <Logo />
+        <p className="text-sm text-ink-faint">
+          A Typeform-style clone, built for the craft of asking well.
+        </p>
+      </div>
+    </footer>
   );
 }

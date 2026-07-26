@@ -54,7 +54,7 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
       {/* Top bar */}
       <header className="z-30 flex items-center justify-between border-b border-neutral-200 bg-white px-4 py-2.5 dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center gap-4">
-          <Logo />
+          <Logo href="/dashboard" />
           <div className="h-5 w-px bg-neutral-200 dark:bg-neutral-700" />
           <input
             value={form.title}
