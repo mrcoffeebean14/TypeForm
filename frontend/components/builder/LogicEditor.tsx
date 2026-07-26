@@ -2,6 +2,7 @@
 
 import { Plus, X } from "lucide-react";
 
+import { OPERATORS } from "@/lib/flowLayout";
 import type { LogicRule, Question } from "@/lib/types";
 
 interface LogicEditorProps {
@@ -9,13 +10,6 @@ interface LogicEditorProps {
   allQuestions: Question[];
   onChange: (logic: LogicRule[]) => void;
 }
-
-const OPERATORS: { value: LogicRule["operator"]; label: string }[] = [
-  { value: "equals", label: "is" },
-  { value: "not_equals", label: "is not" },
-  { value: "greater_than", label: "greater than" },
-  { value: "less_than", label: "less than" },
-];
 
 /**
  * Conditional branching editor (bonus). Each rule jumps to another question or

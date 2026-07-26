@@ -8,11 +8,13 @@ import {
   Plug,
   Send,
   Sparkles,
+  Workflow,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 import { Logo } from "@/components/Logo";
+import { LogicEditor } from "@/components/builder/LogicEditor";
 import { PreviewModal } from "@/components/builder/PreviewModal";
 import { QuestionCanvas } from "@/components/builder/QuestionCanvas";
 import { QuestionList } from "@/components/builder/QuestionList";
@@ -20,11 +22,12 @@ import { SettingsPanel } from "@/components/builder/SettingsPanel";
 import { SharePanel } from "@/components/builder/SharePanel";
 import { ThemePanel } from "@/components/builder/ThemePanel";
 import { useBuilder } from "@/components/builder/useBuilder";
+import { WorkflowCanvas } from "@/components/builder/WorkflowCanvas";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 
-type Tab = "create" | "design" | "share" | "connect";
+type Tab = "create" | "workflow" | "design" | "share" | "connect";
 
 export default function BuilderPage({ params }: { params: { id: string } }) {
   const b = useBuilder(params.id);
@@ -44,6 +47,7 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
 
   const tabs: { id: Tab; label: string; icon: typeof Sparkles }[] = [
     { id: "create", label: "Create", icon: Sparkles },
+    { id: "workflow", label: "Workflow", icon: Workflow },
     { id: "design", label: "Design", icon: Palette },
     { id: "share", label: "Share", icon: Send },
     { id: "connect", label: "Connect", icon: Plug },
@@ -138,6 +142,44 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
                 onUpdate={(patch) => b.selected && b.updateQuestion(b.selected.id, patch)}
                 onUpdateOptions={(options) => b.selected && b.updateOptions(b.selected.id, options)}
               />
+            </aside>
+          </>
+        )}
+
+        {tab === "workflow" && (
+          <>
+            <main className="flex-1 overflow-hidden bg-bg">
+              <WorkflowCanvas
+                questions={form.questions}
+                selectedId={b.selectedId}
+                onSelect={b.setSelectedId}
+              />
+            </main>
+
+            <aside className="w-80 shrink-0 overflow-y-auto border-l border-line bg-surface">
+              {b.selected ? (
+                <>
+                  <div className="border-b border-line-subtle px-4 py-3">
+                    <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-faint">
+                      Logic jump
+                    </h3>
+                    <p className="mt-0.5 truncate text-sm text-ink">
+                      {b.selected.title || `Question ${selectedIndex + 1}`}
+                    </p>
+                  </div>
+                  <div className="px-4 py-4">
+                    <LogicEditor
+                      question={b.selected}
+                      allQuestions={form.questions}
+                      onChange={(logic) => b.updateQuestion(b.selected!.id, { logic })}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="flex h-full items-center justify-center p-6 text-center text-sm text-ink-faint">
+                  Select a question on the canvas to edit its branching.
+                </div>
+              )}
             </aside>
           </>
         )}
