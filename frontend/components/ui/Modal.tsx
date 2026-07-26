@@ -32,7 +32,7 @@ export function Modal({ open, onClose, title, children, footer, maxWidth = "max-
         >
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
           <motion.div
-            className={`relative z-10 w-full ${maxWidth} rounded-2xl bg-white p-6 shadow-2xl dark:bg-neutral-900`}
+            className={`relative z-10 w-full ${maxWidth} rounded-2xl border border-line bg-surface p-6 text-ink shadow-2xl`}
             initial={{ scale: 0.96, opacity: 0, y: 8 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.96, opacity: 0, y: 8 }}
@@ -42,7 +42,7 @@ export function Modal({ open, onClose, title, children, footer, maxWidth = "max-
               {title && <h2 className="text-lg font-semibold">{title}</h2>}
               <button
                 onClick={onClose}
-                className="ml-auto rounded-md p-1 text-ink-faint hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                className="ml-auto rounded-md p-1 text-ink-faint transition-colors hover:bg-surface-2 hover:text-ink"
                 aria-label="Close"
               >
                 <X size={18} />

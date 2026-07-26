@@ -62,8 +62,8 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
-      <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/80 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/80">
+    <div className="min-h-screen bg-bg">
+      <header className="sticky top-0 z-30 border-b border-line bg-surface/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <Logo href="/dashboard" />
           <div className="flex items-center gap-2">
@@ -86,14 +86,14 @@ export default function DashboardPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-64 animate-pulse rounded-xl bg-neutral-200 dark:bg-neutral-800" />
+              <div key={i} className="h-64 animate-pulse rounded-xl bg-surface-2" />
             ))}
           </div>
         ) : forms && forms.length > 0 ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             <button
               onClick={() => { setNewTitle(""); setCreateOpen(true); }}
-              className="flex h-full min-h-[16rem] flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-neutral-300 text-ink-faint transition hover:border-accent hover:text-accent dark:border-neutral-700"
+              className="flex h-full min-h-[16rem] flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line text-ink-faint transition hover:border-accent hover:text-accent"
             >
               <Plus size={28} />
               <span className="text-sm font-medium">New form</span>
@@ -109,7 +109,7 @@ export default function DashboardPage() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 py-24 text-center dark:border-neutral-700">
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-line py-24 text-center">
             <div className="text-5xl">✨</div>
             <h2 className="mt-4 text-lg font-medium">No forms yet</h2>
             <p className="mt-1 text-sm text-ink-faint">Create your first form to get started.</p>
@@ -141,7 +141,7 @@ export default function DashboardPage() {
           onChange={(e) => setNewTitle(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && !createMutation.isPending && createMutation.mutate(newTitle)}
           placeholder="e.g. Customer feedback survey"
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-accent tf-focus dark:border-neutral-700 dark:bg-neutral-800"
+          className="tf-field tf-focus w-full rounded-lg px-3 py-2 text-sm"
         />
       </Modal>
 
@@ -166,7 +166,7 @@ export default function DashboardPage() {
           value={renameValue}
           onChange={(e) => setRenameValue(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && renameTarget && !renameMutation.isPending && renameMutation.mutate({ id: renameTarget.id, title: renameValue })}
-          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-accent tf-focus dark:border-neutral-700 dark:bg-neutral-800"
+          className="tf-field tf-focus w-full rounded-lg px-3 py-2 text-sm"
         />
       </Modal>
 

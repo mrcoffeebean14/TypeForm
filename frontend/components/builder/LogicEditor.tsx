@@ -48,10 +48,10 @@ export function LogicEditor({ question, allQuestions, onChange }: LogicEditorPro
       )}
 
       {rules.map((rule, i) => (
-        <div key={i} className="rounded-lg border border-neutral-200 p-2.5 text-sm dark:border-neutral-700">
+        <div key={i} className="rounded-lg border border-line p-2.5 text-sm">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-medium text-ink-faint">If answer</span>
-            <button onClick={() => removeRule(i)} className="text-ink-faint hover:text-red-500" aria-label="Remove rule">
+            <button onClick={() => removeRule(i)} className="text-ink-faint hover:text-danger" aria-label="Remove rule">
               <X size={14} />
             </button>
           </div>
@@ -60,7 +60,7 @@ export function LogicEditor({ question, allQuestions, onChange }: LogicEditorPro
             <select
               value={rule.operator}
               onChange={(e) => updateRule(i, { operator: e.target.value as LogicRule["operator"] })}
-              className="rounded border border-neutral-200 px-2 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+              className="tf-field rounded px-2 py-1.5 text-sm"
             >
               {OPERATORS.map((op) => (
                 <option key={op.value} value={op.value}>
@@ -73,7 +73,7 @@ export function LogicEditor({ question, allQuestions, onChange }: LogicEditorPro
               <select
                 value={String(rule.value)}
                 onChange={(e) => updateRule(i, { value: e.target.value })}
-                className="rounded border border-neutral-200 px-2 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+                className="tf-field rounded px-2 py-1.5 text-sm"
               >
                 {question.options.map((opt) => (
                   <option key={opt.id} value={opt.value}>
@@ -86,7 +86,7 @@ export function LogicEditor({ question, allQuestions, onChange }: LogicEditorPro
                 value={String(rule.value)}
                 onChange={(e) => updateRule(i, { value: e.target.value })}
                 placeholder="value"
-                className="rounded border border-neutral-200 px-2 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+                className="tf-field rounded px-2 py-1.5 text-sm"
               />
             )}
 
@@ -95,7 +95,7 @@ export function LogicEditor({ question, allQuestions, onChange }: LogicEditorPro
               <select
                 value={rule.goto}
                 onChange={(e) => updateRule(i, { goto: e.target.value })}
-                className="flex-1 rounded border border-neutral-200 px-2 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+                className="tf-field flex-1 rounded px-2 py-1.5 text-sm"
               >
                 {laterQuestions.map((q, idx) => (
                   <option key={q.id} value={q.id}>

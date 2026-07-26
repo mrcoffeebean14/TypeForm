@@ -50,16 +50,19 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
   ];
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-neutral-50 dark:bg-neutral-950">
+    <div className="flex h-screen flex-col overflow-hidden bg-bg">
       {/* Top bar */}
-      <header className="z-30 flex items-center justify-between border-b border-neutral-200 bg-white px-4 py-2.5 dark:border-neutral-800 dark:bg-neutral-900">
+      <header className="z-30 flex items-center justify-between border-b border-line bg-surface px-4 py-2.5">
         <div className="flex items-center gap-4">
           <Logo href="/dashboard" />
-          <div className="h-5 w-px bg-neutral-200 dark:bg-neutral-700" />
+          <div className="h-5 w-px bg-line" />
+          {/* bg-transparent is explicit: text inputs otherwise keep the UA
+              `field` background, which flips with color-scheme and would show
+              as a box against the header. */}
           <input
             value={form.title}
             onChange={(e) => b.updateFormMeta({ title: e.target.value })}
-            className="rounded px-2 py-1 text-sm font-medium outline-none hover:bg-neutral-100 focus:bg-neutral-100 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+            className="rounded bg-transparent px-2 py-1 text-sm font-medium text-ink outline-none transition-colors hover:bg-surface-2 focus:bg-surface-2"
           />
           <SaveIndicator state={b.saveState} />
         </div>
@@ -73,7 +76,7 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
                 "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition",
                 tab === t.id
                   ? "bg-accent/10 text-accent"
-                  : "text-ink-soft hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800",
+                  : "text-ink-soft hover:bg-surface-2",
               )}
             >
               <t.icon size={15} /> {t.label}
@@ -81,7 +84,7 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
           ))}
           <Link
             href={`/forms/${form.id}/results`}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft transition hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft transition hover:bg-surface-2"
           >
             Results
           </Link>
@@ -108,7 +111,7 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
       <div className="flex flex-1 overflow-hidden">
         {tab === "create" && (
           <>
-            <aside className="w-72 shrink-0 border-r border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+            <aside className="w-72 shrink-0 border-r border-line bg-surface">
               <QuestionList
                 questions={form.questions}
                 selectedId={b.selectedId}
@@ -119,7 +122,7 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
               />
             </aside>
 
-            <main className="flex-1 overflow-hidden bg-neutral-100 dark:bg-neutral-950">
+            <main className="flex-1 overflow-hidden bg-bg">
               <QuestionCanvas
                 form={form}
                 question={b.selected}
@@ -128,7 +131,7 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
               />
             </main>
 
-            <aside className="w-80 shrink-0 border-l border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+            <aside className="w-80 shrink-0 border-l border-line bg-surface">
               <SettingsPanel
                 question={b.selected}
                 allQuestions={form.questions}
@@ -141,10 +144,10 @@ export default function BuilderPage({ params }: { params: { id: string } }) {
 
         {tab === "design" && (
           <>
-            <aside className="w-80 shrink-0 border-r border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+            <aside className="w-80 shrink-0 border-r border-line bg-surface">
               <ThemePanel form={form} onUpdateTheme={b.updateTheme} onUpdateSettings={b.updateSettings} />
             </aside>
-            <main className="flex-1 overflow-hidden bg-neutral-100 dark:bg-neutral-950">
+            <main className="flex-1 overflow-hidden bg-bg">
               <QuestionCanvas
                 form={form}
                 question={b.selected ?? form.questions[0] ?? null}
@@ -208,7 +211,7 @@ function ComingSoon({
       </div>
       <h2 className="mt-4 text-lg font-semibold">{title}</h2>
       <p className="mt-1 text-sm text-ink-faint">{description}</p>
-      <span className="mt-4 inline-block rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-ink-faint dark:bg-neutral-800">
+      <span className="mt-4 inline-block rounded-full bg-surface-2 px-3 py-1 text-xs font-medium text-ink-faint">
         Coming soon
       </span>
     </div>

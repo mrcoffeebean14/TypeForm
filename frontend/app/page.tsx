@@ -3,11 +3,12 @@ import Link from "next/link";
 
 import { Logo } from "@/components/Logo";
 import { HeroFormDemo } from "@/components/marketing/HeroFormDemo";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { QUESTION_TYPES } from "@/lib/questionMeta";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white text-ink">
+    <div className="min-h-screen bg-bg text-ink">
       <SiteNav />
       <Hero />
       <TrustStrip />
@@ -23,7 +24,7 @@ export default function LandingPage() {
 
 function SiteNav() {
   return (
-    <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-line bg-surface/80 backdrop-blur">
       <div className="mx-auto flex max-w-container items-center justify-between px-6 py-3.5">
         <div className="flex items-center gap-8">
           <Logo />
@@ -33,13 +34,14 @@ function SiteNav() {
             <a className="transition-colors hover:text-ink" href="#pricing">Pricing</a>
           </nav>
         </div>
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle />
           <Link href="/dashboard" className="hidden text-sm font-medium text-ink-soft transition-colors hover:text-ink sm:block">
             Log in
           </Link>
           <Link
             href="/dashboard"
-            className="rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
+            className="rounded-lg bg-inverted px-4 py-2 text-sm font-semibold text-inverted-fg transition-transform hover:scale-[1.03]"
           >
             Get started
           </Link>
@@ -59,7 +61,7 @@ function Hero() {
 
       <div className="mx-auto grid max-w-container items-center gap-14 px-6 py-16 lg:grid-cols-[1.05fr_1fr] lg:py-24">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-xs font-medium text-ink-soft">
+          <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-ink-soft">
             <span className="h-1.5 w-1.5 rounded-full bg-accent" />
             No-code · Free to start
           </span>
@@ -68,8 +70,8 @@ function Hero() {
             Forms people{" "}
             <span className="relative whitespace-nowrap">
               actually enjoy
-              <svg className="absolute -bottom-1 left-0 w-full" height="10" viewBox="0 0 300 10" preserveAspectRatio="none" aria-hidden>
-                <path d="M2 7 Q 150 1 298 6" fill="none" stroke="#0445AF" strokeWidth="3" strokeLinecap="round" />
+              <svg className="absolute -bottom-1 left-0 w-full text-accent" height="10" viewBox="0 0 300 10" preserveAspectRatio="none" aria-hidden>
+                <path d="M2 7 Q 150 1 298 6" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
               </svg>
             </span>{" "}
             answering.
@@ -83,14 +85,14 @@ function Hero() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href="/dashboard"
-              className="group inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-6 py-3.5 text-base font-semibold text-white transition-transform hover:scale-[1.03]"
+              className="group inline-flex items-center justify-center gap-2 rounded-lg bg-inverted px-6 py-3.5 text-base font-semibold text-inverted-fg transition-transform hover:scale-[1.03]"
             >
               Get started — it’s free
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
               href="/f/customer-feedback-demo"
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-black/10 px-6 py-3.5 text-base font-semibold text-ink transition-colors hover:bg-neutral-50"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-line px-6 py-3.5 text-base font-semibold text-ink transition-colors hover:bg-surface-2"
             >
               Try a live form
             </Link>
@@ -112,7 +114,7 @@ function Hero() {
 function TrustStrip() {
   const names = ["Northwind", "Lumen", "Foundry", "Cardinal", "Verve", "Atlas"];
   return (
-    <section className="border-y border-black/5 bg-white">
+    <section className="border-y border-line bg-surface">
       <div className="mx-auto flex max-w-container flex-col items-center gap-6 px-6 py-8">
         <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-faint">
           Teams collect better answers with Typeclone
@@ -165,7 +167,7 @@ function Features() {
         {FEATURES.map(({ icon: Icon, title, body }) => (
           <div
             key={title}
-            className="group rounded-2xl border border-black/5 bg-white p-7 transition-shadow hover:shadow-[0_20px_50px_-24px_rgba(0,0,0,0.25)]"
+            className="group rounded-2xl border border-line bg-surface p-7 transition-shadow hover:shadow-[0_20px_50px_-24px_rgba(0,0,0,0.25)]"
           >
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent/10 text-accent transition-transform group-hover:scale-105">
               <Icon size={20} />
@@ -183,7 +185,7 @@ function Features() {
 
 function QuestionTypes() {
   return (
-    <section id="types" className="bg-paper">
+    <section id="types" className="bg-surface-alt">
       <div className="mx-auto max-w-container px-6 py-20 lg:py-28">
         <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
           <div>
@@ -196,7 +198,7 @@ function QuestionTypes() {
             </p>
             <Link
               href="/dashboard"
-              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-ink px-6 py-3.5 text-base font-semibold text-white transition-transform hover:scale-[1.03]"
+              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-inverted px-6 py-3.5 text-base font-semibold text-inverted-fg transition-transform hover:scale-[1.03]"
             >
               Build your first form
               <ArrowRight size={18} />
@@ -207,7 +209,7 @@ function QuestionTypes() {
             {QUESTION_TYPES.map(({ type, label, icon: Icon }) => (
               <div
                 key={type}
-                className="flex items-center gap-2.5 rounded-xl border border-black/5 bg-white px-4 py-3.5 text-sm font-medium text-ink shadow-sm"
+                className="flex items-center gap-2.5 rounded-xl border border-line bg-surface px-4 py-3.5 text-sm font-medium text-ink shadow-sm"
               >
                 <Icon size={17} className="shrink-0 text-accent" />
                 {label}
@@ -225,18 +227,18 @@ function QuestionTypes() {
 function ClosingCta() {
   return (
     <section id="pricing" className="mx-auto max-w-container px-6 py-20 lg:py-28">
-      <div className="relative overflow-hidden rounded-[32px] bg-ink px-8 py-16 text-center text-white sm:px-16 sm:py-20">
+      <div className="relative overflow-hidden rounded-[32px] bg-inverted px-8 py-16 text-center text-inverted-fg sm:px-16 sm:py-20">
         <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-accent/30 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-accent/20 blur-3xl" />
         <h2 className="text-display relative text-4xl font-extrabold sm:text-5xl">
           Start asking awesomely.
         </h2>
-        <p className="relative mx-auto mt-5 max-w-lg text-lg text-white/70">
+        <p className="relative mx-auto mt-5 max-w-lg text-lg text-inverted-fg/70">
           Spin up your first conversational form in minutes. It’s free to build, share, and collect.
         </p>
         <Link
           href="/dashboard"
-          className="relative mt-9 inline-flex items-center gap-2 rounded-lg bg-white px-7 py-3.5 text-base font-semibold text-ink transition-transform hover:scale-[1.03]"
+          className="relative mt-9 inline-flex items-center gap-2 rounded-lg bg-inverted-fg px-7 py-3.5 text-base font-semibold text-inverted transition-transform hover:scale-[1.03]"
         >
           Create a form
           <ArrowRight size={18} />
@@ -250,7 +252,7 @@ function ClosingCta() {
 
 function SiteFooter() {
   return (
-    <footer className="border-t border-black/5">
+    <footer className="border-t border-line">
       <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-4 px-6 py-10 sm:flex-row">
         <Logo />
         <p className="text-sm text-ink-faint">

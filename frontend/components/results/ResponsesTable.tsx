@@ -25,7 +25,7 @@ export function ResponsesTable({ form, responses }: ResponsesTableProps) {
 
   if (responses.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 py-24 text-center dark:border-neutral-700">
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-line py-24 text-center">
         <div className="text-4xl">📭</div>
         <h3 className="mt-4 font-medium">No responses yet</h3>
         <p className="mt-1 text-sm text-ink-faint">Share your form to start collecting answers.</p>
@@ -35,9 +35,9 @@ export function ResponsesTable({ form, responses }: ResponsesTableProps) {
 
   return (
     <>
-      <div className="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
+      <div className="overflow-x-auto rounded-xl border border-line">
         <table className="w-full min-w-[640px] text-sm">
-          <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-ink-faint dark:bg-neutral-900">
+          <thead className="bg-surface-2 text-left text-xs uppercase tracking-wide text-ink-faint">
             <tr>
               <th className="px-4 py-3 font-medium">Submitted</th>
               {questions.map((q, i) => (
@@ -54,7 +54,7 @@ export function ResponsesTable({ form, responses }: ResponsesTableProps) {
                 <tr
                   key={r.id}
                   onClick={() => setActive(r)}
-                  className="cursor-pointer border-t border-neutral-100 transition hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-900"
+                  className="cursor-pointer border-t border-line-subtle transition hover:bg-surface-2"
                 >
                   <td className="whitespace-nowrap px-4 py-3 text-ink-faint">
                     {r.submitted_at ? formatDateTime(r.submitted_at) : "—"}
@@ -81,7 +81,7 @@ export function ResponsesTable({ form, responses }: ResponsesTableProps) {
             onClick={() => setActive(null)}
           >
             <motion.div
-              className="h-full w-full max-w-md overflow-y-auto bg-white p-6 shadow-2xl dark:bg-neutral-900"
+              className="h-full w-full max-w-md overflow-y-auto bg-surface p-6 shadow-2xl"
               initial={{ x: 40 }}
               animate={{ x: 0 }}
               exit={{ x: 40 }}
@@ -96,7 +96,7 @@ export function ResponsesTable({ form, responses }: ResponsesTableProps) {
                 </div>
                 <button
                   onClick={() => setActive(null)}
-                  className="rounded-md p-1 text-ink-faint hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  className="rounded-md p-1 text-ink-faint hover:bg-surface-2"
                   aria-label="Close"
                 >
                   <X size={18} />

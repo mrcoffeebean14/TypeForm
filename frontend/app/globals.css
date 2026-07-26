@@ -2,8 +2,144 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------------------
+   Design tokens
+   ---------------------------------------------------------------------------
+   Every product-chrome color is a semantic token stored as space-separated RGB
+   channels, so Tailwind's alpha syntax keeps working (e.g. `bg-accent/10`
+   compiles to `rgb(var(--accent) / 0.1)`).
+
+   Switching themes swaps these values on <html data-theme="...">; components
+   never need light/dark variants. Adding a theme = adding one block here plus
+   an entry in lib/appThemes.ts.
+
+   NOTE: the public respondent flow (/f/[slug]) is deliberately NOT themed by
+   these tokens — it renders each form's own saved theme via inline styles.
+   --------------------------------------------------------------------------- */
+
+:root,
+[data-theme="light"] {
+  --bg: 250 250 250; /* page background */
+  --surface: 255 255 255; /* cards, headers, panels */
+  --surface-2: 245 245 245; /* inputs, hover states */
+  --surface-alt: 245 244 241; /* alternating marketing band */
+  --border: 229 229 229;
+  --border-subtle: 245 245 245;
+  --text: 38 38 39; /* warm near-black, not pure black */
+  --text-soft: 75 75 75;
+  --text-faint: 118 118 118;
+  --accent: 4 69 175;
+  --accent-hover: 3 56 155;
+  --accent-fg: 255 255 255; /* readable text ON the accent */
+  --inverted: 23 23 23; /* dark buttons, logo mark, CTA panel */
+  --inverted-fg: 255 255 255;
+
+  /* Status colors. Declared once here and inherited by the light color themes;
+     only the dark-surface themes below override them for legibility. */
+  --success: 21 128 61;
+  --danger: 220 38 38;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: 10 10 10;
+  --surface: 23 23 23;
+  --surface-2: 38 38 38;
+  --surface-alt: 23 23 23;
+  --border: 64 64 64;
+  --border-subtle: 38 38 38;
+  --text: 245 245 245;
+  --text-soft: 212 212 212;
+  --text-faint: 163 163 163;
+  --accent: 96 141 232; /* lightened so it reads on dark surfaces */
+  --accent-hover: 129 166 240;
+  --accent-fg: 255 255 255;
+  --inverted: 250 250 250; /* flips: light chip on a dark page */
+  --inverted-fg: 23 23 23;
+  --success: 74 222 128;
+  --danger: 248 113 113;
+
+  color-scheme: dark;
+}
+
+[data-theme="indigo"] {
+  --bg: 248 248 255;
+  --surface: 255 255 255;
+  --surface-2: 240 240 253;
+  --surface-alt: 240 240 253;
+  --border: 224 224 248;
+  --border-subtle: 240 240 253;
+  --text: 30 27 75;
+  --text-soft: 67 62 128;
+  --text-faint: 113 108 168;
+  --accent: 79 70 229;
+  --accent-hover: 67 56 202;
+  --accent-fg: 255 255 255;
+  --inverted: 30 27 75;
+  --inverted-fg: 255 255 255;
+}
+
+[data-theme="teal"] {
+  --bg: 240 253 250;
+  --surface: 255 255 255;
+  --surface-2: 231 250 245;
+  --surface-alt: 231 250 245;
+  --border: 199 240 233;
+  --border-subtle: 231 250 245;
+  --text: 19 78 74;
+  --text-soft: 47 110 105;
+  --text-faint: 94 148 143;
+  --accent: 13 148 136;
+  --accent-hover: 10 122 112;
+  --accent-fg: 255 255 255;
+  --inverted: 19 78 74;
+  --inverted-fg: 255 255 255;
+}
+
+[data-theme="sunset"] {
+  --bg: 255 247 237;
+  --surface: 255 255 255;
+  --surface-2: 255 240 224;
+  --surface-alt: 255 240 224;
+  --border: 250 224 195;
+  --border-subtle: 255 240 224;
+  --text: 67 20 7;
+  --text-soft: 116 56 28;
+  --text-faint: 161 116 92;
+  --accent: 234 88 12;
+  --accent-hover: 200 72 8;
+  --accent-fg: 255 255 255;
+  --inverted: 67 20 7;
+  --inverted-fg: 255 255 255;
+}
+
+[data-theme="midnight"] {
+  --bg: 15 23 42;
+  --surface: 30 41 59;
+  --surface-2: 51 65 85;
+  --surface-alt: 30 41 59;
+  --border: 71 85 105;
+  --border-subtle: 51 65 85;
+  --text: 241 245 249;
+  --text-soft: 203 213 225;
+  --text-faint: 148 163 184;
+  --accent: 129 140 248;
+  --accent-hover: 165 180 252;
+  --accent-fg: 23 23 46; /* light accent needs dark text on top */
+  --inverted: 241 245 249;
+  --inverted-fg: 30 41 59;
+  --success: 74 222 128;
+  --danger: 248 113 113;
+
+  color-scheme: dark;
+}
+
+/* A ready-to-use color for consumers that can't compose Tailwind classes
+   (react-hot-toast config, box-shadow, SVG stroke). Declared on the same
+   element as --accent, so it re-resolves per theme. */
 :root {
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --accent-color: rgb(var(--accent));
 }
 
 html,
@@ -12,11 +148,21 @@ body {
 }
 
 body {
-  @apply bg-white text-ink antialiased;
+  @apply bg-bg text-ink antialiased;
 }
 
-.dark body {
-  @apply bg-neutral-950 text-neutral-100;
+@layer components {
+  /* Themeable shell for inputs/selects/textareas. Carries only color +
+     focus behaviour; each usage supplies its own sizing utilities. */
+  .tf-field {
+    @apply border border-line bg-surface text-ink outline-none transition-colors;
+  }
+  .tf-field:focus {
+    @apply border-accent;
+  }
+  .tf-field::placeholder {
+    @apply text-ink-faint;
+  }
 }
 
 /* Hide scrollbars in the full-screen respondent flow while keeping scroll. */
@@ -28,10 +174,10 @@ body {
   scrollbar-width: none;
 }
 
-/* Typeform-style focus ring on custom controls. */
+/* Typeform-style focus ring, tinted by the active theme's accent. */
 .tf-focus:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(4, 69, 175, 0.25);
+  box-shadow: 0 0 0 3px rgb(var(--accent) / 0.25);
 }
 
 /* Tighter optical tracking for large display headlines. */

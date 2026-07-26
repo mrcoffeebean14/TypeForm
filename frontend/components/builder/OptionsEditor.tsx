@@ -28,18 +28,18 @@ export function OptionsEditor({ options, onChange }: OptionsEditorProps) {
     <div className="flex flex-col gap-2">
       {options.map((opt, i) => (
         <div key={opt.id || i} className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded bg-neutral-100 text-xs font-semibold text-ink-faint dark:bg-neutral-700">
+          <span className="flex h-6 w-6 items-center justify-center rounded bg-surface-2 text-xs font-semibold text-ink-faint">
             {questionLetter(i)}
           </span>
           <input
             value={opt.label}
             onChange={(e) => update(i, e.target.value)}
-            className="flex-1 rounded-lg border border-neutral-200 px-3 py-1.5 text-sm outline-none focus:border-accent dark:border-neutral-700 dark:bg-neutral-800"
+            className="tf-field flex-1 rounded-lg px-3 py-1.5 text-sm"
           />
           <button
             onClick={() => remove(i)}
             disabled={options.length <= 1}
-            className="rounded p-1 text-ink-faint transition hover:bg-red-50 hover:text-red-500 disabled:opacity-30 dark:hover:bg-red-900/30"
+            className="rounded p-1 text-ink-faint transition hover:bg-danger/10 hover:text-danger disabled:opacity-30"
             aria-label="Remove option"
           >
             <X size={15} />

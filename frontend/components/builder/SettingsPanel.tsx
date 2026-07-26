@@ -16,7 +16,7 @@ interface SettingsPanelProps {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border-b border-neutral-100 px-4 py-4 dark:border-neutral-800">
+    <div className="border-b border-line-subtle px-4 py-4">
       <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-faint">{title}</h3>
       {children}
     </div>
@@ -80,7 +80,7 @@ export function SettingsPanel({ question, allQuestions, onUpdate, onUpdateOption
             <select
               value={settings.rating_max ?? 5}
               onChange={(e) => onUpdate({ settings: { ...settings, rating_max: Number(e.target.value) } })}
-              className="rounded border border-neutral-200 px-2 py-1 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+              className="tf-field rounded px-2 py-1 text-sm"
             >
               {[3, 4, 5, 7, 10].map((n) => (
                 <option key={n} value={n}>
@@ -105,7 +105,7 @@ export function SettingsPanel({ question, allQuestions, onUpdate, onUpdateOption
                     settings: { ...settings, number_min: e.target.value === "" ? undefined : Number(e.target.value) },
                   })
                 }
-                className="mt-1 w-full rounded border border-neutral-200 px-2 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+                className="tf-field mt-1 w-full rounded px-2 py-1.5 text-sm"
               />
             </label>
             <label className="flex-1 text-xs text-ink-faint">
@@ -118,7 +118,7 @@ export function SettingsPanel({ question, allQuestions, onUpdate, onUpdateOption
                     settings: { ...settings, number_max: e.target.value === "" ? undefined : Number(e.target.value) },
                   })
                 }
-                className="mt-1 w-full rounded border border-neutral-200 px-2 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+                className="tf-field mt-1 w-full rounded px-2 py-1.5 text-sm"
               />
             </label>
           </div>
@@ -131,7 +131,7 @@ export function SettingsPanel({ question, allQuestions, onUpdate, onUpdateOption
             value={settings.placeholder ?? ""}
             onChange={(e) => onUpdate({ settings: { ...settings, placeholder: e.target.value } })}
             placeholder="Type your answer here..."
-            className="w-full rounded border border-neutral-200 px-2 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+            className="tf-field w-full rounded px-2 py-1.5 text-sm"
           />
         </Section>
       )}

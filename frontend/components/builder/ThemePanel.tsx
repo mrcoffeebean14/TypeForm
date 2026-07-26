@@ -26,7 +26,7 @@ function ColorRow({ label, value, onChange }: { label: string; value: string; on
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-8 w-10 cursor-pointer rounded border border-neutral-200 bg-transparent dark:border-neutral-700"
+          className="h-8 w-10 cursor-pointer rounded border border-line bg-transparent"
         />
         <span className="w-16 font-mono text-xs text-ink-faint">{value}</span>
       </span>
@@ -40,14 +40,14 @@ export function ThemePanel({ form, onUpdateTheme, onUpdateSettings }: ThemePanel
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="border-b border-neutral-100 px-4 py-4 dark:border-neutral-800">
+      <div className="border-b border-line-subtle px-4 py-4">
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-faint">Presets</h3>
         <div className="grid grid-cols-2 gap-2">
           {PRESETS.map((preset) => (
             <button
               key={preset.name}
               onClick={() => onUpdateTheme(preset.theme)}
-              className="flex items-center gap-2 rounded-lg border border-neutral-200 p-2 text-left text-xs transition hover:border-accent dark:border-neutral-700"
+              className="flex items-center gap-2 rounded-lg border border-line p-2 text-left text-xs transition hover:border-accent"
             >
               <span
                 className="h-6 w-6 shrink-0 rounded-full ring-1 ring-black/10"
@@ -59,7 +59,7 @@ export function ThemePanel({ form, onUpdateTheme, onUpdateSettings }: ThemePanel
         </div>
       </div>
 
-      <div className="border-b border-neutral-100 px-4 py-4 dark:border-neutral-800">
+      <div className="border-b border-line-subtle px-4 py-4">
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-faint">Colors</h3>
         <div className="flex flex-col gap-3">
           <ColorRow label="Accent" value={theme.answerColor || "#0445AF"} onChange={(v) => onUpdateTheme({ primary: v, answerColor: v })} />
@@ -74,14 +74,14 @@ export function ThemePanel({ form, onUpdateTheme, onUpdateSettings }: ThemePanel
         <input
           value={thankYou.title}
           onChange={(e) => onUpdateSettings({ thankYou: { ...thankYou, title: e.target.value } })}
-          className="mb-3 mt-1 w-full rounded border border-neutral-200 px-2 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+          className="tf-field mb-3 mt-1 w-full rounded px-2 py-1.5 text-sm"
         />
         <label className="text-xs text-ink-faint">Message</label>
         <textarea
           value={thankYou.description}
           onChange={(e) => onUpdateSettings({ thankYou: { ...thankYou, description: e.target.value } })}
           rows={2}
-          className="mt-1 w-full resize-none rounded border border-neutral-200 px-2 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-800"
+          className="tf-field mt-1 w-full resize-none rounded px-2 py-1.5 text-sm"
         />
       </div>
     </div>

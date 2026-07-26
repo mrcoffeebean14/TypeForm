@@ -28,7 +28,6 @@ const FRAMES: Frame[] = [
   { kind: "rating", letter: "C", question: "How’s your day going so far?", max: 5, pick: 4 },
 ];
 
-const ACCENT = "#0445AF";
 
 export function HeroFormDemo() {
   const reduce = useReducedMotion();
@@ -83,11 +82,10 @@ export function HeroFormDemo() {
       <div className="absolute inset-x-6 -bottom-3 h-full rounded-[26px] bg-black/[0.04]" />
       <div className="absolute inset-x-3 -bottom-1.5 h-full rounded-[26px] bg-black/[0.05]" />
 
-      <div className="relative overflow-hidden rounded-[26px] border border-black/5 bg-white shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)]">
-        <div className="h-1 w-full bg-neutral-100">
+      <div className="relative overflow-hidden rounded-[26px] border border-line bg-surface shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)]">
+        <div className="h-1 w-full bg-surface-2">
           <motion.div
-            className="h-full rounded-r-full"
-            style={{ backgroundColor: ACCENT }}
+            className="h-full rounded-r-full bg-accent"
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
@@ -102,7 +100,7 @@ export function HeroFormDemo() {
               exit={reduce ? undefined : { opacity: 0, y: -22 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="mb-3 flex items-center gap-2 text-sm font-medium" style={{ color: ACCENT }}>
+              <div className="mb-3 flex items-center gap-2 text-sm font-medium text-accent">
                 <span>{frame.letter}</span>
                 <span className="text-xs">→</span>
               </div>
@@ -119,8 +117,7 @@ export function HeroFormDemo() {
 
               <div className="mt-7 flex items-center gap-3">
                 <motion.span
-                  className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold text-white"
-                  style={{ backgroundColor: ACCENT }}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-fg"
                   animate={confirmed ? { scale: [1, 1.06, 1] } : {}}
                   transition={{ duration: 0.3 }}
                 >
@@ -140,9 +137,9 @@ export function HeroFormDemo() {
 
 function TextAnswer({ typed }: { typed: string }) {
   return (
-    <div className="border-b-2 pb-2 text-2xl font-light text-ink" style={{ borderColor: `${ACCENT}66` }}>
+    <div className="border-b-2 border-accent/40 pb-2 text-2xl font-light text-ink">
       {typed || <span className="text-ink-faint/50">Type your answer…</span>}
-      <span className="ml-0.5 inline-block h-6 w-[2px] translate-y-1 animate-blink" style={{ backgroundColor: ACCENT }} />
+      <span className="ml-0.5 inline-block h-6 w-[2px] translate-y-1 animate-blink bg-accent" />
     </div>
   );
 }
@@ -155,19 +152,14 @@ function ChoiceAnswer({ frame, confirmed }: { frame: Extract<Frame, { kind: "cho
         return (
           <div
             key={opt}
-            className="flex items-center gap-3 rounded-lg border-2 px-4 py-2.5 text-[15px] transition-colors"
-            style={{
-              borderColor: active ? ACCENT : `${ACCENT}33`,
-              backgroundColor: active ? `${ACCENT}14` : `${ACCENT}08`,
-            }}
+            className={`flex items-center gap-3 rounded-lg border-2 px-4 py-2.5 text-[15px] transition-colors ${
+              active ? "border-accent bg-accent/10" : "border-accent/20 bg-accent/[0.03]"
+            }`}
           >
             <span
-              className="flex h-6 w-6 items-center justify-center rounded border text-xs font-medium"
-              style={{
-                borderColor: `${ACCENT}66`,
-                backgroundColor: active ? ACCENT : "transparent",
-                color: active ? "#fff" : ACCENT,
-              }}
+              className={`flex h-6 w-6 items-center justify-center rounded border border-accent/40 text-xs font-medium ${
+                active ? "bg-accent text-accent-fg" : "text-accent"
+              }`}
             >
               {active ? <Check size={13} /> : String.fromCharCode(65 + i)}
             </span>
@@ -187,12 +179,11 @@ function RatingAnswer({ frame, confirmed }: { frame: Extract<Frame, { kind: "rat
         return (
           <div
             key={i}
-            className="flex h-12 w-12 items-center justify-center rounded-lg border-2 text-lg font-medium transition-colors"
-            style={{
-              borderColor: active ? ACCENT : `${ACCENT}33`,
-              backgroundColor: active ? ACCENT : `${ACCENT}08`,
-              color: active ? "#fff" : ACCENT,
-            }}
+            className={`flex h-12 w-12 items-center justify-center rounded-lg border-2 text-lg font-medium transition-colors ${
+              active
+                ? "border-accent bg-accent text-accent-fg"
+                : "border-accent/20 bg-accent/[0.03] text-accent"
+            }`}
           >
             {i + 1}
           </div>

@@ -1,7 +1,12 @@
 import type { Config } from "tailwindcss";
 
+/** Token-backed color. Keeps Tailwind's `/opacity` syntax working. */
+const token = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
+
 const config: Config = {
-  darkMode: "class",
+  // Tokens carry light/dark themselves, so `dark:` is only a safety net for
+  // any variant that hasn't been converted yet.
+  darkMode: ["selector", '[data-theme="dark"]'],
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -9,20 +14,36 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Semantic tokens defined in app/globals.css, swapped per [data-theme].
       colors: {
-        // Typeform-like ink + accent palette. Ink is a warm near-black, not
-        // pure black, matching Typeform's softer text tone.
+        bg: token("bg"),
+        surface: {
+          DEFAULT: token("surface"),
+          2: token("surface-2"),
+          alt: token("surface-alt"),
+        },
+        line: {
+          DEFAULT: token("border"),
+          subtle: token("border-subtle"),
+        },
+        // `ink` keeps its existing name so the ~90 text-ink* usages become
+        // theme-aware without edits.
         ink: {
-          DEFAULT: "#262627",
-          soft: "#4B4B4B",
-          faint: "#767676",
+          DEFAULT: token("text"),
+          soft: token("text-soft"),
+          faint: token("text-faint"),
         },
         accent: {
-          DEFAULT: "#0445AF",
-          hover: "#03389B",
+          DEFAULT: token("accent"),
+          hover: token("accent-hover"),
+          fg: token("accent-fg"),
         },
-        // Restrained warm-neutral band for alternating marketing sections.
-        paper: "#F5F4F1",
+        inverted: {
+          DEFAULT: token("inverted"),
+          fg: token("inverted-fg"),
+        },
+        success: token("success"),
+        danger: token("danger"),
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],

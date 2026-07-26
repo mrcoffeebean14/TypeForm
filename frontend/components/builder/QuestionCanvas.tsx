@@ -33,7 +33,7 @@ export function QuestionCanvas({ form, question, index, onUpdate }: QuestionCanv
 
   if (!question) {
     return (
-      <div className="flex h-full items-center justify-center bg-neutral-50 dark:bg-neutral-900">
+      <div className="flex h-full items-center justify-center bg-bg">
         <div className="text-center text-ink-faint">
           <p className="text-lg font-medium">No question selected</p>
           <p className="mt-1 text-sm">Add a question or pick one from the left to start editing.</p>

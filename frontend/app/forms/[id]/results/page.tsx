@@ -30,8 +30,8 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
-      <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/90 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/90">
+    <div className="min-h-screen bg-bg">
+      <header className="sticky top-0 z-30 border-b border-line bg-surface/90 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-ink-faint hover:text-ink">
@@ -63,7 +63,7 @@ export default function ResultsPage({ params }: { params: { id: string } }) {
           </p>
         </div>
 
-        <div className="mb-6 flex gap-1 border-b border-neutral-200 dark:border-neutral-800">
+        <div className="mb-6 flex gap-1 border-b border-line">
           {(["summary", "responses"] as Tab[]).map((t) => (
             <button
               key={t}
@@ -102,7 +102,7 @@ function LoadingBlock() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="h-24 animate-pulse rounded-xl bg-neutral-200 dark:bg-neutral-800" />
+        <div key={i} className="h-24 animate-pulse rounded-xl bg-surface-2" />
       ))}
     </div>
   );

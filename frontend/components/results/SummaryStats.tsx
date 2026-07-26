@@ -21,11 +21,11 @@ export function SummaryStats({ stats }: { stats: FormSummaryStats }) {
           return (
             <div
               key={q.question_id}
-              className="rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900"
+              className="rounded-xl border border-line bg-surface p-5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded bg-neutral-100 text-xs font-semibold dark:bg-neutral-800">
+                  <span className="flex h-6 w-6 items-center justify-center rounded bg-surface-2 text-xs font-semibold">
                     {i + 1}
                   </span>
                   <h3 className="font-medium">{q.title || "Untitled question"}</h3>
@@ -47,7 +47,7 @@ export function SummaryStats({ stats }: { stats: FormSummaryStats }) {
                             {count} · {pct}%
                           </span>
                         </div>
-                        <div className="h-2 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                        <div className="h-2 overflow-hidden rounded-full bg-surface-2">
                           <div
                             className="h-full rounded-full bg-accent transition-all"
                             style={{ width: `${(Number(count) / maxCount) * 100}%` }}
@@ -81,7 +81,7 @@ export function SummaryStats({ stats }: { stats: FormSummaryStats }) {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="rounded-xl border border-line bg-surface p-4">
       <p className="text-xs font-medium uppercase tracking-wide text-ink-faint">{label}</p>
       <p className="mt-1 text-2xl font-semibold">{value}</p>
     </div>

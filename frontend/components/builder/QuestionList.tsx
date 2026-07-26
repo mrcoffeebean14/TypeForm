@@ -89,10 +89,10 @@ export function QuestionList({
         )}
       </div>
 
-      <div className="relative border-t border-neutral-200 p-3 dark:border-neutral-800">
+      <div className="relative border-t border-line p-3">
         <button
           onClick={() => setAddOpen((v) => !v)}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-300 py-2.5 text-sm font-medium text-ink-soft transition hover:border-accent hover:text-accent dark:border-neutral-700"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-line py-2.5 text-sm font-medium text-ink-soft transition hover:border-accent hover:text-accent"
         >
           <Plus size={16} /> Add question
         </button>
@@ -100,7 +100,7 @@ export function QuestionList({
         {addOpen && (
           <>
             <div className="fixed inset-0 z-10" onClick={() => setAddOpen(false)} />
-            <div className="absolute bottom-16 left-3 right-3 z-20 grid grid-cols-2 gap-1 rounded-xl border border-neutral-200 bg-white p-2 shadow-xl dark:border-neutral-700 dark:bg-neutral-800">
+            <div className="absolute bottom-16 left-3 right-3 z-20 grid grid-cols-2 gap-1 rounded-xl border border-line bg-surface p-2 shadow-xl">
               {QUESTION_TYPES.map((meta) => {
                 const Icon = meta.icon;
                 return (
@@ -110,7 +110,7 @@ export function QuestionList({
                       onAdd(meta.type);
                       setAddOpen(false);
                     }}
-                    className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                    className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm hover:bg-surface-2"
                   >
                     <Icon size={16} className="text-accent" />
                     {meta.label}
@@ -151,20 +151,20 @@ function SortableRow({
         "group flex items-center gap-2 rounded-lg border px-2 py-2 text-sm transition",
         selected
           ? "border-accent bg-accent/5"
-          : "border-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800",
+          : "border-transparent hover:bg-surface-2",
         isDragging && "opacity-60 shadow-lg",
       )}
     >
       <button
         {...attributes}
         {...listeners}
-        className="cursor-grab touch-none text-neutral-300 hover:text-neutral-500 active:cursor-grabbing"
+        className="cursor-grab touch-none text-ink-faint/60 hover:text-ink-faint active:cursor-grabbing"
         aria-label="Drag to reorder"
       >
         <GripVertical size={16} />
       </button>
       <button onClick={onSelect} className="flex min-w-0 flex-1 items-center gap-2 text-left">
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-neutral-100 text-xs font-semibold text-ink-soft dark:bg-neutral-700">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-surface-2 text-xs font-semibold text-ink-soft">
           {questionLetter(index)}
         </span>
         <Icon size={14} className="shrink-0 text-ink-faint" />
@@ -172,7 +172,7 @@ function SortableRow({
       </button>
       <button
         onClick={onDelete}
-        className="shrink-0 rounded p-1 text-ink-faint opacity-0 transition hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 dark:hover:bg-red-900/30"
+        className="shrink-0 rounded p-1 text-ink-faint opacity-0 transition hover:bg-danger/10 hover:text-danger group-hover:opacity-100"
         aria-label="Delete question"
       >
         <Trash2 size={14} />

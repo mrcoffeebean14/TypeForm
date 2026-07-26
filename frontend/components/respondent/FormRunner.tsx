@@ -77,21 +77,18 @@ export function FormRunner({ form, preview = false }: FormRunnerProps) {
       return;
     }
     setError(null);
-    persistPartial(q.id, value);
 
     // Logic jumps: a matching rule can skip ahead or end the form.
     const jump = resolveNextIndex(q, value, questions);
-    let nextIndex: number;
-    if (jump === -1) {
-      finish();
-      return;
-    } else if (jump != null) {
-      nextIndex = jump;
-    } else {
-      nextIndex = current + 1;
-    }
+    const nextIndex = jump === -1 ? questions.length : jump ?? current + 1;
+    const willFinish = nextIndex >= questions.length;
 
-    if (nextIndex >= questions.length) {
+    // Only save a partial when the respondent is staying in the form. On the
+    // final step the submit payload already carries every answer, so a PATCH
+    // here would just race the POST on the same response.
+    if (!willFinish) persistPartial(q.id, value);
+
+    if (willFinish) {
       finish();
     } else {
       setHistory((h) => [...h, current]);
