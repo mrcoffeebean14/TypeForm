@@ -6,9 +6,11 @@ respondent advances) -> complete (validate everything and mark submitted).
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -45,21 +47,35 @@ def _get_open_response(response_id: str, db: Session) -> Response:
 
 
 def _upsert_answers(db: Session, resp: Response, incoming: list, questions: dict) -> None:
-    """Insert or update answers; skips answers for unknown questions.
+    """Insert or update answers atomically; skips answers for unknown questions.
 
-    Appends through the ``resp.answers`` relationship so the in-memory
-    collection stays in sync for validation later in the same request.
+    Uses a single INSERT .. ON CONFLICT DO UPDATE rather than read-then-write.
+    A read-modify-write here races: two requests for the same response (the
+    last question's partial save and the final submit overlap) can both observe
+    "no answer yet" and both INSERT, violating uq_answer_response_question and
+    failing the request with a 500.
     """
-    existing = {a.question_id: a for a in resp.answers}
-    for item in incoming:
-        if item.question_id not in questions:
-            continue
-        if item.question_id in existing:
-            existing[item.question_id].value = item.value
-        else:
-            answer = Answer(question_id=item.question_id, value=item.value)
-            resp.answers.append(answer)
-            existing[item.question_id] = answer
+    rows = [
+        {
+            "id": uuid4().hex,
+            "response_id": resp.id,
+            "question_id": item.question_id,
+            "value": item.value,
+        }
+        for item in incoming
+        if item.question_id in questions
+    ]
+    if not rows:
+        return
+
+    stmt = sqlite_insert(Answer).values(rows)
+    stmt = stmt.on_conflict_do_update(
+        index_elements=[Answer.response_id, Answer.question_id],
+        set_={"value": stmt.excluded.value},
+    )
+    db.execute(stmt)
+    # The ORM collection is now stale; drop it so callers reload DB truth.
+    db.expire(resp, ["answers"])
 
 
 @router.get("/forms/{slug}", response_model=PublicFormOut)

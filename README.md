@@ -63,8 +63,15 @@ form and its responses are live — no setup needed to look around.
 - **CSV export** of all responses.
 
 **Extras (bonus features implemented)**
-- 🌙 Dark mode across the whole app.
-- 🎨 Custom themes per form (accent, background, text colors + presets) applied to the respondent flow.
+- 🎨 **App-wide themes** — a theme picker in the header offers light, dark, and four
+  named color themes (Indigo, Teal, Sunset, Midnight) across the landing page,
+  dashboard, builder, and results. Built on semantic CSS-variable design tokens
+  (`app/globals.css` + `tailwind.config.ts`), so components carry no light/dark
+  variants and a new theme is one CSS block plus an entry in `lib/appThemes.ts`.
+  The choice persists in `localStorage`.
+- 🖌️ Custom themes **per form** (accent, background, text colors + presets) applied to
+  the respondent flow. Deliberately separate from the app theme: respondents see
+  the theme the form's creator chose for that form, not the creator's UI preference.
 - 🔀 Logic jumps / conditional branching.
 - 📊 Partial-response tracking & completion rate.
 - Placeholders ("Coming soon") for Integrations/Connect and Team collaboration, matching the assignment's mocked sections.
