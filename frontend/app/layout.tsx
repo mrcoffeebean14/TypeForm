@@ -13,7 +13,7 @@ const hanken = Hanken_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Typeclone — Forms people actually enjoy answering",
+  title: "TypeForm — Forms people actually enjoy answering",
   description:
     "Build conversational forms and surveys that feel like a chat, not a chore. One question at a time.",
 };

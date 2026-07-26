@@ -117,7 +117,7 @@ function TrustStrip() {
     <section className="border-y border-line bg-surface">
       <div className="mx-auto flex max-w-container flex-col items-center gap-6 px-6 py-8">
         <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-faint">
-          Teams collect better answers with Typeclone
+          Teams collect better answers with TypeForm. Trusted by hundreds of companies, from startups to scale-ups.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-60">
           {names.map((n) => (
@@ -256,7 +256,7 @@ function SiteFooter() {
       <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-4 px-6 py-10 sm:flex-row">
         <Logo />
         <p className="text-sm text-ink-faint">
-          A Typeform-style clone, built for the craft of asking well.
+          A built for the craft of asking well.
         </p>
       </div>
     </footer>
