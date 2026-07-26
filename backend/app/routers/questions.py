@@ -35,6 +35,9 @@ def _get_question_or_404(question_id: str, db: Session) -> Question:
 @router.post("/forms/{form_id}/questions", response_model=QuestionOut, status_code=201)
 def add_question(form_id: str, payload: QuestionCreate, db: Session = Depends(get_db)):
     form = get_form_or_404(form_id, db)
+    # coalesce guarantees a non-null int (-1 when the form is empty), so add
+    # directly — do NOT use `next_pos or -1`, which would treat a real max of 0
+    # as falsy and collide the new question onto position 0.
     next_pos = db.scalar(
         select(func.coalesce(func.max(Question.position), -1)).where(Question.form_id == form.id)
     )
@@ -46,7 +49,7 @@ def add_question(form_id: str, payload: QuestionCreate, db: Session = Depends(ge
         required=payload.required,
         settings=payload.settings,
         logic=payload.logic,
-        position=(next_pos or -1) + 1,
+        position=next_pos + 1,
     )
     db.add(question)
     db.flush()

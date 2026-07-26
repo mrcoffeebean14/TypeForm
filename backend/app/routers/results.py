@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import io
+import re
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
@@ -30,14 +31,27 @@ def _completed_responses(db: Session, form_id: str) -> list[Response]:
     ).all()
 
 
+def _csv_safe(text: str) -> str:
+    """Neutralize CSV/formula injection.
+
+    Respondent- and creator-supplied text lands in a spreadsheet; a cell that
+    begins with =, +, -, @ (or a leading control char) can execute as a formula
+    in Excel/Sheets. Prefix such cells with a single quote so they render as
+    literal text.
+    """
+    if text and text[0] in ("=", "+", "-", "@", "\t", "\r"):
+        return "'" + text
+    return text
+
+
 def _format_value(value) -> str:
     if value is None:
         return ""
     if isinstance(value, bool):
         return "Yes" if value else "No"
     if isinstance(value, list):
-        return ", ".join(str(v) for v in value)
-    return str(value)
+        return _csv_safe(", ".join(str(v) for v in value))
+    return _csv_safe(str(value))
 
 
 @router.get("/{form_id}/responses", response_model=list[ResponseOut])
@@ -63,7 +77,9 @@ def export_csv(form_id: str, db: Session = Depends(get_db)):
 
     buffer = io.StringIO()
     writer = csv.writer(buffer)
-    header = ["Response ID", "Submitted At"] + [q.title or f"Question {i+1}" for i, q in enumerate(form.questions)]
+    header = ["Response ID", "Submitted At"] + [
+        _csv_safe(q.title) if q.title else f"Question {i+1}" for i, q in enumerate(form.questions)
+    ]
     writer.writerow(header)
 
     for r in responses:
@@ -74,7 +90,10 @@ def export_csv(form_id: str, db: Session = Depends(get_db)):
         writer.writerow(row)
 
     buffer.seek(0)
-    filename = f"{(form.title or 'form').replace(' ', '_')}_responses.csv"
+    # Restrict to a safe charset: the raw title could otherwise inject quotes or
+    # CRLF into the Content-Disposition header (HTTP response-splitting).
+    safe_title = re.sub(r"[^A-Za-z0-9_-]+", "_", form.title or "form").strip("_") or "form"
+    filename = f"{safe_title}_responses.csv"
     return StreamingResponse(
         iter([buffer.getvalue()]),
         media_type="text/csv",

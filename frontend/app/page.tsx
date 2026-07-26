@@ -139,7 +139,7 @@ export default function DashboardPage() {
           autoFocus
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && createMutation.mutate(newTitle)}
+          onKeyDown={(e) => e.key === "Enter" && !createMutation.isPending && createMutation.mutate(newTitle)}
           placeholder="e.g. Customer feedback survey"
           className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-accent tf-focus dark:border-neutral-700 dark:bg-neutral-800"
         />
@@ -165,7 +165,7 @@ export default function DashboardPage() {
           autoFocus
           value={renameValue}
           onChange={(e) => setRenameValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && renameTarget && renameMutation.mutate({ id: renameTarget.id, title: renameValue })}
+          onKeyDown={(e) => e.key === "Enter" && renameTarget && !renameMutation.isPending && renameMutation.mutate({ id: renameTarget.id, title: renameValue })}
           className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-accent tf-focus dark:border-neutral-700 dark:bg-neutral-800"
         />
       </Modal>

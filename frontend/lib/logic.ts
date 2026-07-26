@@ -2,7 +2,7 @@
 import type { LogicRule, Question } from "./types";
 
 function matches(rule: LogicRule, value: unknown): boolean {
-  const answered = Array.isArray(value) ? value : value;
+  const answered = value;
   switch (rule.operator) {
     case "equals":
       return Array.isArray(answered)

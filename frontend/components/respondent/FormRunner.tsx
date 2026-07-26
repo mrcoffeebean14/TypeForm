@@ -4,7 +4,7 @@ import { AnimatePresence } from "framer-motion";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import { resolveNextIndex } from "@/lib/logic";
 import type { PublicForm } from "@/lib/types";
 import { validateAnswer } from "@/lib/validation";
@@ -110,10 +110,17 @@ export function FormRunner({ form, preview = false }: FormRunnerProps) {
     });
   }, []);
 
-  const finish = useCallback(() => {
+  const finish = useCallback(async () => {
     if (!preview && responseId.current) {
       const payload = Object.entries(answersRef.current).map(([question_id, value]) => ({ question_id, value }));
-      api.completeResponse(responseId.current, payload).catch(() => {});
+      try {
+        await api.completeResponse(responseId.current, payload);
+      } catch (e) {
+        // Don't show a false "thank you" — surface the failure and stay put so
+        // the respondent can retry rather than silently losing their answers.
+        setError(e instanceof ApiError ? e.message : "Could not submit your response. Please try again.");
+        return;
+      }
     }
     setStage("thankyou");
   }, [preview]);

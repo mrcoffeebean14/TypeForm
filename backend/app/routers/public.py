@@ -20,6 +20,7 @@ from ..schemas import (
     ResponsePatchIn,
     ResponseStartOut,
 )
+from ..services.logic import reachable_question_ids
 from ..services.validation import ValidationError, validate_answer
 
 router = APIRouter(prefix="/api/public", tags=["public"])
@@ -98,10 +99,17 @@ def complete_response(response_id: str, payload: ResponseCompleteIn, db: Session
     db.flush()
 
     # Server-side validation across all answers for the form's questions.
+    # Only questions on the respondent's actual branch path are considered:
+    # a `required` question the branching logic jumped over must not block the
+    # submission. Answers that *were* provided are still format-validated.
     answers_by_q = {a.question_id: a for a in resp.answers}
+    answer_values = {qid: a.value for qid, a in answers_by_q.items()}
+    reachable = reachable_question_ids(resp.form.questions, answer_values)
     for question in resp.form.questions:
         answer = answers_by_q.get(question.id)
         value = answer.value if answer else None
+        if question.id not in reachable and value is None:
+            continue  # skipped by branching — nothing to validate
         try:
             normalized = validate_answer(question, value)
         except ValidationError as exc:

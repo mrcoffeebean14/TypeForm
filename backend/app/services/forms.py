@@ -13,6 +13,21 @@ def response_count(db: Session, form_id: str) -> int:
     ) or 0
 
 
+def _remap_logic(logic: list, id_map: dict[str, str]) -> list:
+    """Rewrite each rule's ``goto`` from a source question id to the clone's id.
+
+    "end" and any target not in the map are left untouched.
+    """
+    remapped = []
+    for rule in logic or []:
+        new_rule = dict(rule)
+        goto = new_rule.get("goto")
+        if goto and goto != "end":
+            new_rule["goto"] = id_map.get(goto, goto)
+        remapped.append(new_rule)
+    return remapped
+
+
 def duplicate_form(db: Session, source: Form) -> Form:
     """Deep-copy a form with its questions and options as a fresh draft.
 
@@ -30,6 +45,11 @@ def duplicate_form(db: Session, source: Form) -> Form:
     db.add(clone)
     db.flush()  # assign clone.id
 
+    # Two passes: create every question first to build the old→new id map, then
+    # rewrite branching targets so logic jumps point at the clone's questions
+    # instead of the source's (which don't exist in the copy).
+    id_map: dict[str, str] = {}
+    cloned: list[tuple[Question, Question]] = []
     for q in source.questions:
         new_q = Question(
             form_id=clone.id,
@@ -39,10 +59,12 @@ def duplicate_form(db: Session, source: Form) -> Form:
             required=q.required,
             position=q.position,
             settings=dict(q.settings or {}),
-            logic=list(q.logic or []),
+            logic=[],  # filled in after the id map is complete
         )
         db.add(new_q)
         db.flush()
+        id_map[q.id] = new_q.id
+        cloned.append((q, new_q))
         for opt in q.options:
             db.add(
                 QuestionOption(
@@ -52,5 +74,9 @@ def duplicate_form(db: Session, source: Form) -> Form:
                     position=opt.position,
                 )
             )
+
+    for src_q, new_q in cloned:
+        new_q.logic = _remap_logic(src_q.logic, id_map)
+
     db.flush()
     return clone
