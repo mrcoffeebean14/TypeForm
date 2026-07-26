@@ -6,8 +6,24 @@ A functional clone of Typeform: build forms with a drag-and-drop builder, publis
 
 ---
 
+## Live demo
+
+|             |                                                                |
+| ----------- | -------------------------------------------------------------- |
+| **App**     | https://type-form-smoky.vercel.app                              |
+| **Dashboard** | https://type-form-smoky.vercel.app/dashboard                  |
+| **Sample form** | https://type-form-smoky.vercel.app/f/customer-feedback-demo |
+| **API**     | https://typeclone-backend-production.up.railway.app             |
+| **API docs** | https://typeclone-backend-production.up.railway.app/docs       |
+
+Frontend on Vercel, backend on Railway. The database is seeded, so the sample
+form and its responses are live — no setup needed to look around.
+
+---
+
 ## Table of contents
 
+- [Live demo](#live-demo)
 - [Features](#features)
 - [Tech stack](#tech-stack)
 - [Architecture overview](#architecture-overview)
@@ -28,8 +44,9 @@ A functional clone of Typeform: build forms with a drag-and-drop builder, publis
 - 8 question types: **short text, long text, multiple choice, dropdown, email, number, yes/no, rating**.
 - Per-question settings: required toggle, help text, placeholder, rating scale, number min/max, allow-multiple, and per-question **logic jumps**.
 
-**Form management** (`/`)
+**Form management** (`/dashboard`)
 - Dashboard listing every form with status (draft/published) and response count.
+  (`/` is the marketing landing page.)
 - Create, rename, duplicate (deep copy), and delete — with modals and toasts.
 - Publish / unpublish, generating a shareable public slug.
 
@@ -50,7 +67,7 @@ A functional clone of Typeform: build forms with a drag-and-drop builder, publis
 - 🎨 Custom themes per form (accent, background, text colors + presets) applied to the respondent flow.
 - 🔀 Logic jumps / conditional branching.
 - 📊 Partial-response tracking & completion rate.
-- Placeholders ("Coming soon") for Integrations/Connect, matching the assignment's mocked sections.
+- Placeholders ("Coming soon") for Integrations/Connect and Team collaboration, matching the assignment's mocked sections.
 
 ---
 
@@ -77,7 +94,7 @@ A functional clone of Typeform: build forms with a drag-and-drop builder, publis
 │  • Builder (3-pane)     │   /api/public/... (no auth)  │   forms · questions      │
 │  • Respondent flow      │   /api/forms/{id}/summary    │   public · results       │
 │  • Results              │                              │  services/               │
-│                         │                              │   validation · csv ·     │
+│                         │                              │   validation · logic ·   │
 │  lib/api.ts (typed)     │                              │   slug · forms           │
 └────────────────────────┘                              │  models.py (SQLAlchemy)  │
                                                          └───────────┬──────────────┘
@@ -196,7 +213,9 @@ cp .env.example .env.local     # NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 npm run dev                    # http://localhost:3000
 ```
 
-Open **http://localhost:3000**. Seeded published forms are live at:
+Open **http://localhost:3000** for the landing page, or go straight to
+**http://localhost:3000/dashboard** for the form list. Seeded published forms are
+live at:
 - `/f/customer-feedback-demo`
 - `/f/techconf-2026-demo`
 
@@ -204,18 +223,23 @@ Open **http://localhost:3000**. Seeded published forms are live at:
 
 ## Deployment
 
-Designed for **Vercel (frontend) + Render (backend)**.
+Deployed as **Vercel (frontend) + Railway (backend)** — see [Live demo](#live-demo)
+for the running URLs.
 
-**Backend on Render**
-- The included `render.yaml` provisions a Python web service with a 1 GB persistent
-  disk mounted at `/var/data`, so the SQLite file survives restarts.
-- On first deploy the build runs `seed.py` (which no-ops if data already exists —
-  set `SEED_FORCE=1` to reseed).
+**Backend on Railway**
+- Set the **root directory** to `backend`. `backend/railway.json` configures the
+  rest: NIXPACKS builder, healthcheck on `/api/health`, and a start command of
+  `python seed.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
+- Attach a **Volume mounted at `/data`** and set `DATABASE_URL=sqlite:////data/app.db`,
+  so the SQLite file survives redeploys. Without the volume the DB is wiped on
+  every deploy.
+- `seed.py` runs on every start but no-ops if data already exists — set
+  `SEED_FORCE=1` to force a reseed.
 - Set `CORS_ORIGINS` and `PUBLIC_BASE_URL` to your Vercel URL.
 
 **Frontend on Vercel**
 - Import the repo, set the **root directory** to `frontend`.
-- Add env var `NEXT_PUBLIC_API_BASE_URL` = your Render backend URL.
+- Add env var `NEXT_PUBLIC_API_BASE_URL` = your Railway backend URL.
 
 ---
 
@@ -223,8 +247,8 @@ Designed for **Vercel (frontend) + Render (backend)**.
 
 - **Auth is simplified** to a single seeded default creator (allowed by the brief).
   Every form belongs to that creator; there's no login.
-- **SQLite** is used directly. In production it lives on Render's persistent disk;
-  for a single-instance demo this is simpler and fully sufficient.
+- **SQLite** is used directly. In production it lives on a Railway volume mounted
+  at `/data`; for a single-instance demo this is simpler and fully sufficient.
 - **Options are relational** (`question_option` table) while type-specific config
   is JSON — a deliberate split between what has relationships and what doesn't.
 - **File-upload and payment** question types are intentionally out of scope
@@ -246,14 +270,16 @@ backend/
     models.py          # SQLAlchemy models (the schema)
     schemas.py         # Pydantic request/response models
     deps.py            # shared dependencies (default creator, 404 helpers)
-    routers/           # forms · questions · public · results
-    services/          # validation · csv · slug · form duplication
+    routers/           # forms · questions · public · results (CSV export lives here)
+    services/          # validation · logic · slug · form duplication
   seed.py              # sample data
+  railway.json         # Railway build/deploy config
   requirements.txt
 
 frontend/
   app/
-    page.tsx                    # dashboard
+    page.tsx                    # marketing landing page
+    dashboard/page.tsx          # form list (create/rename/duplicate/delete)
     forms/[id]/edit/page.tsx    # builder
     forms/[id]/results/page.tsx # results
     f/[slug]/page.tsx           # public respondent flow
@@ -262,6 +288,7 @@ frontend/
     builder/                    # question list, canvas, settings, theme, logic
     respondent/                 # FormRunner + screens (welcome/question/thankyou)
     results/                    # summary stats + responses table
+    marketing/                  # landing-page hero demo
     ui/                         # Button, Modal, Toggle, etc.
   lib/                          # api client, types, hooks, validation, logic
 ```
