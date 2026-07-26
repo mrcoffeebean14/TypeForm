@@ -9,13 +9,14 @@ from ..database import get_db
 from ..deps import get_default_creator, get_form_or_404
 from ..models import Creator, Form, FormStatus
 from ..schemas import (
+    CreatorOut,
     FormCreate,
     FormOut,
     FormSummary,
     FormUpdate,
     MessageOut,
 )
-from ..services.forms import duplicate_form, response_count
+from ..services.forms import completed_count, duplicate_form, response_count
 from ..services.slug import generate_unique_slug
 
 router = APIRouter(prefix="/api/forms", tags=["forms"])
@@ -48,6 +49,7 @@ def list_forms(db: Session = Depends(get_db), creator: Creator = Depends(get_def
             status=f.status,
             public_slug=f.public_slug,
             response_count=response_count(db, f.id),
+            completed_count=completed_count(db, f.id),
             question_count=len(f.questions),
             created_at=f.created_at,
             updated_at=f.updated_at,

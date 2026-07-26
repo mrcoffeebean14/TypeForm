@@ -13,6 +13,18 @@ def response_count(db: Session, form_id: str) -> int:
     ) or 0
 
 
+def completed_count(db: Session, form_id: str) -> int:
+    """Responses the respondent actually finished, matching the results router."""
+    # ponytail: a second per-form count query, so the dashboard list is now 2N
+    # queries. Fine for a personal workspace; fold both into one GROUP BY if it
+    # ever lists hundreds of forms.
+    return db.scalar(
+        select(func.count(Response.id)).where(
+            Response.form_id == form_id, Response.is_complete.is_(True)
+        )
+    ) or 0
+
+
 def _remap_logic(logic: list, id_map: dict[str, str]) -> list:
     """Rewrite each rule's ``goto`` from a source question id to the clone's id.
 

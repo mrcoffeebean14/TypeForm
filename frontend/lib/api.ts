@@ -1,5 +1,6 @@
 // Typed fetch client for the FastAPI backend.
 import type {
+  Creator,
   Form,
   FormSummary,
   FormSummaryStats,
@@ -51,6 +52,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
 export const api = {
   base: BASE,
+
+  // ---- Account ----
+  getMe: () => request<Creator>("/api/me"),
 
   // ---- Forms (creator) ----
   listForms: () => request<FormSummary[]>("/api/forms"),

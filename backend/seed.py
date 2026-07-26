@@ -84,7 +84,7 @@ def seed() -> None:
 
     db = SessionLocal()
     try:
-        creator = Creator(name="Alex Rivera", email="creator@typeclone.dev")
+        creator = Creator(name="Pranav", email="creator@typeclone.dev")
         db.add(creator)
         db.flush()
 

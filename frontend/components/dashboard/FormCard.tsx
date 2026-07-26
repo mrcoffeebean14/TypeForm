@@ -1,24 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BarChart3, Copy, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
 
 import type { FormSummary } from "@/lib/types";
 import { timeAgo } from "@/lib/utils";
 
-interface FormCardProps {
+import { FormActionsMenu, type FormActions } from "./FormActionsMenu";
+
+interface FormCardProps extends FormActions {
   form: FormSummary;
-  onRename: (form: FormSummary) => void;
-  onDuplicate: (form: FormSummary) => void;
-  onDelete: (form: FormSummary) => void;
 }
 
 export function FormCard({ form, onRename, onDuplicate, onDelete }: FormCardProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const closeTimer = useRef<ReturnType<typeof setTimeout>>();
-
   const isPublished = form.status === "published";
 
   return (
@@ -40,34 +35,13 @@ export function FormCard({ form, onRename, onDuplicate, onDelete }: FormCardProp
           <Link href={`/forms/${form.id}/edit`} className="line-clamp-2 font-medium leading-tight hover:underline">
             {form.title}
           </Link>
-          <div
-            className="relative"
-            onMouseLeave={() => {
-              closeTimer.current = setTimeout(() => setMenuOpen(false), 120);
-            }}
-            onMouseEnter={() => clearTimeout(closeTimer.current)}
-          >
-            <button
-              onClick={() => setMenuOpen((v) => !v)}
-              className="rounded-md p-1.5 text-ink-faint opacity-0 transition hover:bg-surface-2 group-hover:opacity-100"
-              aria-label="Form actions"
-            >
-              <MoreHorizontal size={18} />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 top-9 z-20 w-40 overflow-hidden rounded-lg border border-line bg-surface py-1 shadow-lg">
-                <MenuItem icon={Pencil} label="Rename" onClick={() => { setMenuOpen(false); onRename(form); }} />
-                <MenuItem icon={Copy} label="Duplicate" onClick={() => { setMenuOpen(false); onDuplicate(form); }} />
-                <Link
-                  href={`/forms/${form.id}/results`}
-                  className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-surface-2"
-                >
-                  <BarChart3 size={15} /> Results
-                </Link>
-                <MenuItem icon={Trash2} label="Delete" danger onClick={() => { setMenuOpen(false); onDelete(form); }} />
-              </div>
-            )}
-          </div>
+          <FormActionsMenu
+            form={form}
+            onRename={onRename}
+            onDuplicate={onDuplicate}
+            onDelete={onDelete}
+            revealOnHover
+          />
         </div>
 
         <div className="mt-3 flex items-center gap-2 text-xs text-ink-faint">
@@ -93,28 +67,5 @@ export function FormCard({ form, onRename, onDuplicate, onDelete }: FormCardProp
         </div>
       </div>
     </motion.div>
-  );
-}
-
-function MenuItem({
-  icon: Icon,
-  label,
-  onClick,
-  danger,
-}: {
-  icon: typeof Pencil;
-  label: string;
-  onClick: () => void;
-  danger?: boolean;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-surface-2 ${
-        danger ? "text-danger" : ""
-      }`}
-    >
-      <Icon size={15} /> {label}
-    </button>
   );
 }

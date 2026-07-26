@@ -86,9 +86,16 @@ export interface FormSummary {
   status: FormStatus;
   public_slug?: string | null;
   response_count: number;
+  completed_count: number;
   question_count: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface Creator {
+  id: string;
+  name: string;
+  email: string;
 }
 
 export interface PublicForm {

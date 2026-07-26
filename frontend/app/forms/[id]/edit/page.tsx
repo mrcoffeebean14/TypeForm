@@ -24,6 +24,7 @@ import { ThemePanel } from "@/components/builder/ThemePanel";
 import { useBuilder } from "@/components/builder/useBuilder";
 import { WorkflowCanvas } from "@/components/builder/WorkflowCanvas";
 import { Button } from "@/components/ui/Button";
+import { ComingSoon } from "@/components/ui/ComingSoon";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { cn } from "@/lib/utils";
 
@@ -237,25 +238,3 @@ function SaveIndicator({ state }: { state: "idle" | "saving" | "saved" }) {
   );
 }
 
-function ComingSoon({
-  icon: Icon,
-  title,
-  description,
-}: {
-  icon: typeof Plug;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="max-w-sm text-center">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10 text-accent">
-        <Icon size={26} />
-      </div>
-      <h2 className="mt-4 text-lg font-semibold">{title}</h2>
-      <p className="mt-1 text-sm text-ink-faint">{description}</p>
-      <span className="mt-4 inline-block rounded-full bg-surface-2 px-3 py-1 text-xs font-medium text-ink-faint">
-        Coming soon
-      </span>
-    </div>
-  );
-}
