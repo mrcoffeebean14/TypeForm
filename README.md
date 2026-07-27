@@ -43,10 +43,16 @@ form and its responses are live — no setup needed to look around.
 - Drag-and-drop reordering (`@dnd-kit`), inline title/description editing, debounced autosave with a save indicator.
 - 8 question types: **short text, long text, multiple choice, dropdown, email, number, yes/no, rating**.
 - Per-question settings: required toggle, help text, placeholder, rating scale, number min/max, allow-multiple, and per-question **logic jumps**.
+- A **Workflow tab** that draws the whole form as a node graph (detailed under _Extras_ below).
 
 **Form management** (`/dashboard`)
-- Dashboard listing every form with status (draft/published) and response count.
-  (`/` is the marketing landing page.)
+- A workspace shell: persistent sidebar with create, search, the workspace's form
+  count, and a responses-collected meter. (`/` is the marketing landing page.)
+- **List** (default) and **Grid** views on a toggle. The list is a table showing
+  **responses, completed, and last-updated** per form.
+- Search by name and sort by date created, last updated, name, or response count.
+- Two **starter templates** — one click builds a real form with its questions
+  already created and drops you into the builder.
 - Create, rename, duplicate (deep copy), and delete — with modals and toasts.
 - Publish / unpublish, generating a shareable public slug.
 
@@ -73,8 +79,19 @@ form and its responses are live — no setup needed to look around.
   the respondent flow. Deliberately separate from the app theme: respondents see
   the theme the form's creator chose for that form, not the creator's UI preference.
 - 🔀 Logic jumps / conditional branching.
+- 🗺️ **Workflow canvas** (`/forms/[id]/edit` → Workflow) — the form drawn as a node
+  graph: a card per question plus an End node, solid arrows for the default order,
+  and labelled dashed arcs for each logic jump (bowing above the row for forward
+  jumps, below for backward ones, so a loop is obvious at a glance). Clicking a
+  node edits that question's rules right on the canvas. It also flags rules whose
+  target question was deleted — those are silently ignored at runtime, so they're
+  otherwise invisible. Node positions are derived from question order rather than
+  stored, so reordering questions just recomputes the layout.
 - 📊 Partial-response tracking & completion rate.
-- Placeholders ("Coming soon") for Integrations/Connect and Team collaboration, matching the assignment's mocked sections.
+- 🚧 Every control this clone doesn't implement (Integrations, Invite, Contacts,
+  Automations, Brand kit, plans, response limits, workspaces, AI) links to
+  `/coming-soon/[feature]` — one dynamic route that names the feature and explains
+  what it will do, rather than a dead button. Unknown slugs 404.
 
 ---
 
@@ -155,10 +172,18 @@ creator ──1:N──▶ form ──1:N──▶ question ──1:N──▶ q
 
 Interactive docs available at `http://localhost:8000/docs` when the backend runs.
 
+**Account**
+| Method | Path | Purpose |
+| ------ | ---- | ------- |
+| GET    | `/api/me` | The current creator (name, email) for the dashboard header |
+
+Defined in `app/main.py` beside `/api/health` rather than in a router — it
+doesn't belong under the `/api/forms` prefix.
+
 **Forms (creator)**
 | Method | Path | Purpose |
 | ------ | ---- | ------- |
-| GET    | `/api/forms` | List forms with status + response count |
+| GET    | `/api/forms` | List forms with status + response and completed counts |
 | POST   | `/api/forms` | Create a blank draft |
 | GET    | `/api/forms/{id}` | Full form with ordered questions + options |
 | PATCH  | `/api/forms/{id}` | Rename / update theme / settings |
@@ -219,6 +244,22 @@ npm install
 cp .env.example .env.local     # NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 npm run dev                    # http://localhost:3000
 ```
+
+### 3. Tests
+
+```bash
+cd frontend
+npm test                       # 11 cases
+```
+
+The suite runs on **Node's built-in test runner** with `--experimental-strip-types`
+(Node 22.6+), executing the TypeScript files directly — so there is no test
+framework in `package.json` and **zero added dependencies**. It covers the two
+pure modules: `lib/flowLayout.ts` (graph layout, forward/backward jump direction,
+detecting rules whose target was deleted) and `lib/formList.ts` (search and sort,
+including that it copies rather than mutating React Query's cached array).
+
+Type-checking is `npx tsc --noEmit`.
 
 Open **http://localhost:3000** for the landing page, or go straight to
 **http://localhost:3000/dashboard** for the form list. Seeded published forms are
@@ -285,17 +326,30 @@ backend/
 
 frontend/
   app/
-    page.tsx                    # marketing landing page
-    dashboard/page.tsx          # form list (create/rename/duplicate/delete)
-    forms/[id]/edit/page.tsx    # builder
-    forms/[id]/results/page.tsx # results
-    f/[slug]/page.tsx           # public respondent flow
+    page.tsx                       # marketing landing page
+    dashboard/page.tsx             # workspace shell (list/grid, search, sort)
+    forms/[id]/edit/page.tsx       # builder (Create · Workflow · Design · Share · Connect)
+    forms/[id]/results/page.tsx    # results
+    f/[slug]/page.tsx              # public respondent flow
+    coming-soon/[feature]/page.tsx # placeholder page for unbuilt features
   components/
     fields/QuestionField.tsx    # shared per-type renderer (builder + flow)
-    builder/                    # question list, canvas, settings, theme, logic
+    builder/                    # question list, canvas, settings, theme, logic,
+                                #   WorkflowCanvas (the node graph)
+    dashboard/                  # top bar, sidebar, form table, template cards
     respondent/                 # FormRunner + screens (welcome/question/thankyou)
     results/                    # summary stats + responses table
     marketing/                  # landing-page hero demo
-    ui/                         # Button, Modal, Toggle, etc.
-  lib/                          # api client, types, hooks, validation, logic
+    ui/                         # Button, Modal, Toggle, ComingSoon, etc.
+  lib/
+    api.ts · types.ts · hooks.ts · validation.ts · logic.ts
+    flowLayout.ts               # Workflow canvas graph      (+ flowLayout.test.ts)
+    formList.ts                 # dashboard search + sort    (+ formList.test.ts)
+    formTemplates.ts            # starter-form definitions
+    appThemes.ts                # app-wide color themes
 ```
+
+Two components are deliberately shared rather than duplicated:
+`ui/ComingSoon.tsx` backs both the builder's Connect tab and the
+`/coming-soon` route, and `dashboard/FormActionsMenu.tsx` provides the
+rename/duplicate/results/delete menu for both the grid card and the table row.
