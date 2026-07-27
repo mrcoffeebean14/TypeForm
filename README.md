@@ -2,7 +2,7 @@
 
 A functional clone of Typeform: build forms with a drag-and-drop builder, publish them via a shareable link, collect responses through the signature **one-question-at-a-time conversational flow**, and view results with summary stats — all in a clean, animated interface.
 
-> Built for the SDE Fullstack assignment. Frontend in **Next.js (TypeScript)**, backend in **Python / FastAPI**, data in **SQLite**.
+> Frontend in **Next.js (TypeScript)**, backend in **Python / FastAPI**, data in **SQLite**.
 
 ---
 
